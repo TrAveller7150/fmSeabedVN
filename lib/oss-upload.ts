@@ -1,28 +1,76 @@
-import OSS from 'ali-oss'
+// 延迟加载 OSS 客户端，确保只在服务端使用
+import type OSS from 'ali-oss'
 
-// 创建 OSS 客户端
-// 注意：这是配置模板，实际使用时需要从环境变量读取
-const ossClient = new OSS({
-  region: process.env.OSS_REGION || 'oss-cn-beijing',
-  accessKeyId: process.env.OSS_ACCESS_KEY_ID || '',
-  accessKeySecret: process.env.OSS_ACCESS_KEY_SECRET || '',
-  bucket: process.env.OSS_BUCKET || 'seabed-images',
-})
+let ossClient: OSS | null = null
 
-export { ossClient }
+function getOSSClient(): OSS {
+  if (typeof window !== 'undefined') {
+    throw new Error('OSS client can only be used on the server side')
+  }
 
-// 上传函数（后续实现）
-export async function uploadImage(file: File, path: string): Promise<string> {
-  // TODO: 实现上传逻辑
-  // const buffer = await file.arrayBuffer()
-  // const result = await ossClient.put(path, Buffer.from(buffer))
-  // return result.url
-  throw new Error('Not implemented')
+  if (!ossClient) {
+    // 动态导入，避免在客户端打包
+    const OSSModule = require('ali-oss')
+    // ali-oss 的 CommonJS 导出方式
+    const OSS = OSSModule.default || OSSModule
+    ossClient = new OSS({
+      region: process.env.OSS_REGION!,
+      accessKeyId: process.env.OSS_ACCESS_KEY_ID!,
+      accessKeySecret: process.env.OSS_ACCESS_KEY_SECRET!,
+      bucket: process.env.OSS_BUCKET!,
+    })
+  }
+
+  return ossClient
 }
 
-// 删除函数（后续实现）
-export async function deleteImage(path: string): Promise<void> {
-  // TODO: 实现删除逻辑
-  // await ossClient.delete(path)
-  throw new Error('Not implemented')
+// 上传图片到 OSS
+export async function uploadImage(buffer: Buffer, filename: string): Promise<string> {
+  const client = getOSSClient()
+  const path = `fanworks/${Date.now()}-${filename}`
+  const result = await client.put(path, buffer, {
+    headers: {
+      'Content-Type': getContentType(filename),
+    },
+    // 设置文件为公共读，允许公开访问
+    acl: 'public-read',
+  })
+
+  // 确保返回完整的 URL
+  let imageUrl = result.url
+  if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
+    // 如果返回的是相对路径，构建完整 URL
+    const bucket = process.env.OSS_BUCKET!
+    const region = process.env.OSS_REGION!
+    imageUrl = `https://${bucket}.${region}.aliyuncs.com/${path}`
+  }
+
+  return imageUrl
+}
+
+// 删除 OSS 中的图片
+export async function deleteImage(url: string): Promise<void> {
+  try {
+    const client = getOSSClient()
+    // 从完整 URL 中提取路径
+    const urlObj = new URL(url)
+    const path = urlObj.pathname.substring(1) // 移除开头的 /
+    await client.delete(path)
+  } catch (error) {
+    console.error('删除 OSS 图片失败:', error)
+    // 不抛出错误，允许继续执行
+  }
+}
+
+// 根据文件名获取 Content-Type
+function getContentType(filename: string): string {
+  const ext = filename.toLowerCase().split('.').pop()
+  const types: Record<string, string> = {
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    png: 'image/png',
+    gif: 'image/gif',
+    webp: 'image/webp',
+  }
+  return types[ext || ''] || 'image/jpeg'
 }

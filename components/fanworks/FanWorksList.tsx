@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 
 interface WorkInfoProps {
@@ -55,14 +56,30 @@ function WorkRow({ author, type, description, image, imageAlt = "", link, revers
 
     const imageElement = (
         <div className="flex-[1_0_0] h-[432px] min-h-px min-w-px relative rounded-[16px] shadow-[0px_4px_4px_1px_rgba(0,0,0,0.64)]" data-name="Image" role="presentation">
-            <img alt={imageAlt} className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[16px] size-full" src={image} />
+            <img
+                alt={imageAlt}
+                className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[16px] size-full"
+                src={image}
+                onError={(e) => {
+                    console.error('图片加载失败:', image)
+                    e.currentTarget.src = '/assets/fanworks/fanwork.jpg' // 备用图片
+                }}
+            />
         </div>
     );
 
     const imageLink = link ? (
         <a className="flex-[1_0_0] h-[432px] min-h-px min-w-px relative" href={link} target="_blank" rel="noopener noreferrer" role="presentation">
             <figure aria-hidden="true" className="block cursor-pointer rounded-[16px] shadow-[0px_4px_4px_1px_rgba(0,0,0,0.64)] size-full" data-name="Image">
-                <img alt={imageAlt} className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[16px] size-full" src={image} />
+                <img
+                    alt={imageAlt}
+                    className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[16px] size-full"
+                    src={image}
+                    onError={(e) => {
+                        console.error('图片加载失败:', image)
+                        e.currentTarget.src = '/assets/fanworks/fanwork.jpg' // 备用图片
+                    }}
+                />
             </figure>
         </a>
     ) : imageElement;
@@ -96,28 +113,66 @@ function WorkRow({ author, type, description, image, imageAlt = "", link, revers
     );
 }
 
+interface FanWork {
+    id: number;
+    cover_image_url: string;
+    author: string;
+    category: string;
+    description: string | null;
+    source_url: string | null;
+    created_at: string;
+}
+
 export default function FanWorksList() {
+    const [works, setWorks] = useState<FanWork[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        loadWorks();
+    }, []);
+
+    const loadWorks = async () => {
+        try {
+            const response = await fetch('/api/fanworks?limit=100');
+            const data = await response.json();
+            setWorks(data.data || []);
+        } catch (error) {
+            console.error('加载作品失败:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center py-20">
+                <div className="text-gray-600">加载中...</div>
+            </div>
+        );
+    }
+
+    if (works.length === 0) {
+        return (
+            <div className="flex items-center justify-center py-20">
+                <div className="text-gray-600">暂无作品</div>
+            </div>
+        );
+    }
+
     return (
         <ul className="flex flex-col items-center justify-center relative size-full content-stretch py-[40px]" data-name="Feature 1">
-            {/* 第1行：右（文字在左，图片在右）-> 文字靠右对齐 */}
-            <WorkRow
-                author="夕原@u_br2"
-                type="画"
-                description="this is a brief context describing the picture"
-                image="/assets/fanworks/fanwork.jpg"
-                imageAlt="夕原@u_br2 的作品"
-                reverse={false}
-            />
-            {/* 第2行：左（图片在左，文字在右）-> 文字靠左对齐 */}
-            <WorkRow
-                author="XXXX"
-                type="MAD.AMV"
-                description="this is a brief context describing the picture"
-                image="/assets/fanworks/xshell.png"
-                imageAlt="XXXX 的 MAD.AMV 作品"
-                link="https://www.bilibili.com/video/BV14s4y1z7Ze"
-                reverse={true}
-            />
+            {works.map((work, index) => (
+                <WorkRow
+                    key={work.id}
+                    author={work.author}
+                    type={work.category}
+                    description={work.description || '暂无简介'}
+                    image={work.cover_image_url}
+                    imageAlt={`${work.author} 的 ${work.category} 作品`}
+                    link={work.source_url || undefined}
+                    reverse={index % 2 === 1} // 交替显示：偶数索引（0,2,4...）图片在右，奇数索引（1,3,5...）图片在左
+                />
+            ))}
         </ul>
     );
 }
