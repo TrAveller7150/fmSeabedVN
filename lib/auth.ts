@@ -32,7 +32,7 @@ export async function createSession(adminId: number): Promise<string> {
 
 // 验证 Session
 export async function verifySession(sessionId: string): Promise<number | null> {
-    const [rows] = await pool.execute<Array<{ admin_id: number }>>(
+    const [rows] = await pool.query<Array<{ admin_id: number }>>(
         'SELECT admin_id FROM sessions WHERE id = ? AND expires_at > NOW()',
         [sessionId]
     )
@@ -51,17 +51,26 @@ export async function deleteSession(sessionId: string): Promise<void> {
 
 // 初始化默认管理员账号（如果不存在）
 export async function initDefaultAdmin(): Promise<void> {
-    const [rows] = await pool.execute<Array<{ id: number }>>(
+    const defaultUsername = process.env.DEFAULT_ADMIN_USERNAME || 'admin'
+    const [rows] = await pool.query<Array<{ id: number }>>(
         'SELECT id FROM admins WHERE username = ?',
-        ['traveller']
+        [defaultUsername]
     )
 
     if (Array.isArray(rows) && rows.length === 0) {
-        const passwordHash = await hashPassword('CIAspy667#7150')
+        // 从环境变量读取默认管理员信息，如果没有则使用占位符（仅用于开发环境）
+        const defaultUsername = process.env.DEFAULT_ADMIN_USERNAME || 'admin'
+        const defaultPassword = process.env.DEFAULT_ADMIN_PASSWORD || 'changeme'
+
+        if (defaultPassword === 'changeme') {
+            console.warn('警告: 使用默认密码 "changeme"，请在生产环境中设置 DEFAULT_ADMIN_PASSWORD 环境变量')
+        }
+
+        const passwordHash = await hashPassword(defaultPassword)
         await pool.execute(
             'INSERT INTO admins (username, password_hash) VALUES (?, ?)',
-            ['traveller', passwordHash]
+            [defaultUsername, passwordHash]
         )
-        console.log('默认管理员账号已创建: traveller')
+        console.log(`默认管理员账号已创建: ${defaultUsername}`)
     }
 }

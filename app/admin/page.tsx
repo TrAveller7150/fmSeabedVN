@@ -23,7 +23,7 @@ export default function AdminPage() {
       if (data.authenticated) {
         setAuthenticated(true)
       } else {
-        const loginToken = token || 'soakckhaikkaot'
+        const loginToken = token || process.env.NEXT_PUBLIC_ADMIN_ACCESS_TOKEN || ''
         router.push(`/login?token=${loginToken}`)
       }
     } catch (error) {

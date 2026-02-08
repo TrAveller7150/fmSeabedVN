@@ -41,7 +41,7 @@ export default function FanWorksAdminPage() {
       const authResponse = await fetch('/api/auth/check')
       const authData = await authResponse.json()
       if (!authData.authenticated) {
-        const loginToken = token || 'soakckhaikkaot'
+        const loginToken = token || process.env.NEXT_PUBLIC_ADMIN_ACCESS_TOKEN || ''
         router.push(`/login?token=${loginToken}`)
         return
       }
@@ -198,7 +198,7 @@ export default function FanWorksAdminPage() {
                     <div className="space-x-4">
             <button
               onClick={() => {
-                const loginToken = token || 'soakckhaikkaot'
+                const loginToken = token || process.env.NEXT_PUBLIC_ADMIN_ACCESS_TOKEN || ''
                 router.push(`${adminPath}?token=${loginToken}`)
               }}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"

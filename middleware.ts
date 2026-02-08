@@ -6,8 +6,8 @@ export function middleware(request: NextRequest) {
   const sessionId = request.cookies.get('session_id')?.value
 
   // 获取管理后台安全配置
-  const adminPath = process.env.ADMIN_SECRET_PATH || '/5b7768811528673b'
-  const adminToken = process.env.ADMIN_ACCESS_TOKEN || 'soakckhaikkaot'
+  const adminPath = process.env.ADMIN_SECRET_PATH || '/admin'
+  const adminToken = process.env.ADMIN_ACCESS_TOKEN || ''
   const pathWithoutSlash = adminPath.replace(/^\//, '') // 移除开头的 /
   
   // 检查是否是管理后台路径（包括登录页面）

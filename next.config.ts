@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
     ],
   },
   async rewrites() {
-    const adminPath = process.env.ADMIN_SECRET_PATH || '/5b7768811528673b'
+    const adminPath = process.env.ADMIN_SECRET_PATH || '/admin'
     const pathWithoutSlash = adminPath.replace(/^\//, '') // 移除开头的 /
     
     return [
