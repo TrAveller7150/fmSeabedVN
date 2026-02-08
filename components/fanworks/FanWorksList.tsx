@@ -55,7 +55,7 @@ function WorkRow({ author, type, description, image, imageAlt = "", link, revers
     );
 
     const imageElement = (
-        <div className="flex-[1_0_0] h-[432px] min-h-px min-w-px relative rounded-[16px] shadow-[0px_4px_4px_1px_rgba(0,0,0,0.64)]" data-name="Image" role="presentation">
+        <div className="flex-[1_0_0] h-[432px] min-h-px min-w-px relative rounded-[16px] shadow-[0px_4px_4px_1px_rgba(0,0,0,0.64)] transition-shadow duration-300 hover:shadow-[0px_8px_16px_2px_rgba(0,0,0,0.7)] overflow-hidden group" data-name="Image" role="presentation">
             <img
                 alt={imageAlt}
                 className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[16px] size-full"
@@ -69,8 +69,8 @@ function WorkRow({ author, type, description, image, imageAlt = "", link, revers
     );
 
     const imageLink = link ? (
-        <a className="flex-[1_0_0] h-[432px] min-h-px min-w-px relative" href={link} target="_blank" rel="noopener noreferrer" role="presentation">
-            <figure aria-hidden="true" className="block cursor-pointer rounded-[16px] shadow-[0px_4px_4px_1px_rgba(0,0,0,0.64)] size-full" data-name="Image">
+        <a className="flex-[1_0_0] h-[432px] min-h-px min-w-px relative group" href={link} target="_blank" rel="noopener noreferrer" role="presentation">
+            <figure aria-hidden="true" className="block cursor-pointer rounded-[16px] shadow-[0px_4px_4px_1px_rgba(0,0,0,0.64)] transition-shadow duration-300 hover:shadow-[0px_8px_16px_2px_rgba(0,0,0,0.7)] size-full overflow-hidden" data-name="Image">
                 <img
                     alt={imageAlt}
                     className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[16px] size-full"

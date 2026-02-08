@@ -3,7 +3,7 @@ import "./globals.css";
 import MainLayout from "@/components/layouts/MainLayout";
 
 export const metadata: Metadata = {
-  title: "SEABED 粉丝站",
+  title: "海底小纵队",
   description: "Seabed 游戏粉丝网站",
 };
 

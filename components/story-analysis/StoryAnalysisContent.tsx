@@ -7,11 +7,11 @@ interface AnalysisCardProps {
 
 function AnalysisCard({ title, description, image, link }: AnalysisCardProps) {
     return (
-        <article className="bg-white block cursor-pointer rounded-[16px] size-full hover:shadow-lg transition-shadow duration-300" data-name="Card">
+        <article className="bg-white block cursor-pointer rounded-[16px] size-full hover:shadow-lg transition-shadow duration-300 group" data-name="Card">
             <a className="block size-full" href={link} target="_blank" rel="noopener noreferrer">
                 <div className="content-stretch flex flex-col items-start justify-center overflow-hidden relative rounded-[16px] size-full isolate">
-                    <div aria-hidden="true" className="h-[240px] relative shrink-0 w-full" data-name="Image" role="presentation">
-                        <img alt={title} className="absolute inset-0 max-w-none object-cover pointer-events-none size-full rounded-t-[16px]" src={image} />
+                    <div aria-hidden="true" className="h-[240px] relative shrink-0 w-full overflow-hidden" data-name="Image" role="presentation">
+                        <img alt={title} className="absolute inset-0 max-w-none object-cover pointer-events-none size-full rounded-t-[16px] transition-transform duration-500 group-hover:scale-105" src={image} />
                     </div>
                     <div className="h-[255px] relative shrink-0 w-full" data-name="Body">
                         <div className="flex flex-col items-center size-full">

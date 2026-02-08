@@ -8,12 +8,38 @@ function CompanyInfo() {
     );
 }
 
+function SocialLink({ href, iconPath, alt }: { href: string; iconPath: string; alt: string }) {
+    return (
+        <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative flex items-center justify-center w-[32px] h-[32px] hover:opacity-80 transition-opacity"
+            aria-label={alt}
+        >
+            <img src={iconPath} alt={alt} className="w-full h-full object-contain" />
+        </a>
+    );
+}
+
 function ContactInfo() {
     return (
         <div className="relative flex flex-col items-start gap-[8px] w-full shrink-0 content-stretch" data-name="Text">
             <CompanyInfo />
             <div className="relative flex flex-col justify-center min-w-full w-[min-content] shrink-0 font-['Inter',sans-serif] font-medium text-[16px] text-[rgba(0,0,0,0.55)] leading-[0] tracking-[-0.08px] not-italic">
-                <p className="leading-[1.45] whitespace-pre-wrap">Contact: 1427998531@qq.com</p>
+                <p className="leading-[1.45] whitespace-pre-wrap">联系: 1427998531@qq.com</p>
+            </div>
+            <div className="relative flex items-center gap-[16px] mt-[8px]">
+                <SocialLink
+                    href="https://tieba.baidu.com/home/main?id=tb.1.34404a88.MYwRMLmj6kuU04YAO79kkg&fr=userbar"
+                    iconPath="/tieba.svg"
+                    alt="百度贴吧"
+                />
+                <SocialLink
+                    href="https://bangumi.tv/user/traveller7150"
+                    iconPath="/bangumi.svg"
+                    alt="Bangumi"
+                />
             </div>
         </div>
     );

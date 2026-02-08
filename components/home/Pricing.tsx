@@ -1,3 +1,7 @@
+'use client'
+
+import RevealAnimation from '@/components/common/RevealAnimation'
+
 function PricingBackground() {
   return (
     <div className="absolute inset-0 blur-[3.35px]">
@@ -64,10 +68,14 @@ function PricingGroup() {
 function PricingContent() {
   return (
     <div className="flex flex-col items-center justify-center gap-[40px] w-full max-w-[1400px] px-[64px] py-[120px] z-10" data-name="Pricing cards 1">
-      <div className="flex flex-col justify-center shrink-0 w-full h-[30px] font-['Inter','Noto_Sans_SC','Noto_Sans_JP',sans-serif] font-medium text-[32px] text-center text-[#fffcfc] leading-[0] tracking-[-0.16px] not-italic mb-8">
-        <p className="leading-[1.45] whitespace-pre-wrap drop-shadow-md">购买原作</p>
-      </div>
-      <PricingGroup />
+      <RevealAnimation direction="up" delay={0}>
+        <div className="flex flex-col justify-center shrink-0 w-full h-[30px] font-['Inter','Noto_Sans_SC','Noto_Sans_JP',sans-serif] font-medium text-[32px] text-center text-[#fffcfc] leading-[0] tracking-[-0.16px] not-italic mb-8">
+          <p className="leading-[1.45] whitespace-pre-wrap drop-shadow-md">购买原作</p>
+        </div>
+      </RevealAnimation>
+      <RevealAnimation direction="up" delay={200}>
+        <PricingGroup />
+      </RevealAnimation>
     </div>
   );
 }
