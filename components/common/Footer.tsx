@@ -31,6 +31,11 @@ function ContactInfo() {
             </div>
             <div className="relative flex items-center gap-[16px] mt-[8px]">
                 <SocialLink
+                    href="https://github.com/TrAveller7150/fmSeabedVN"
+                    iconPath="/github.svg"
+                    alt="GitHub"
+                />
+                <SocialLink
                     href="https://tieba.baidu.com/home/main?id=tb.1.34404a88.MYwRMLmj6kuU04YAO79kkg&fr=userbar"
                     iconPath="/tieba.svg"
                     alt="百度贴吧"
