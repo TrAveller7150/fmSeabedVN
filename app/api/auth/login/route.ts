@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import pool from '@/lib/db'
 import { verifyPassword, createSession } from '@/lib/auth'
+import * as adminQueries from '@/lib/db/queries/admins'
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,19 +14,14 @@ export async function POST(request: NextRequest) {
     }
 
     // 查询管理员
-    const [rows] = await pool.execute<Array<{ id: number; password_hash: string }>>(
-      'SELECT id, password_hash FROM admins WHERE username = ?',
-      [username]
-    )
+    const admin = await adminQueries.getAdminByUsername(username)
 
-    if (!Array.isArray(rows) || rows.length === 0) {
+    if (!admin) {
       return NextResponse.json(
         { error: '用户名或密码错误' },
         { status: 401 }
       )
     }
-
-    const admin = rows[0]
 
     // 验证密码
     const isValid = await verifyPassword(password, admin.password_hash)

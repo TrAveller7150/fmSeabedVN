@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import pool from '@/lib/db'
 import { requireAuth } from '@/lib/middleware'
 import { uploadImage, deleteImage } from '@/lib/oss-upload'
+import * as fanworkQueries from '@/lib/db/queries/fanworks'
 
 // 获取二创作品列表（公开接口，不需要认证）
 export async function GET(request: NextRequest) {
@@ -9,38 +9,16 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url)
         const page = Math.max(1, parseInt(searchParams.get('page') || '1'))
         const limit = Math.max(1, Math.min(100, parseInt(searchParams.get('limit') || '50'))) // 限制在 1-100 之间
-        const offset = (page - 1) * limit
 
-        // 使用模板字符串，因为 limit 和 offset 是安全的整数
-        const [rows] = await pool.query<Array<{
-            id: number
-            cover_image_url: string
-            author: string
-            category: string
-            description: string | null
-            source_url: string | null
-            created_at: Date
-        }>>(
-            `SELECT id, cover_image_url, author, category, description, source_url, created_at 
-       FROM fan_works 
-       WHERE is_published = TRUE 
-       ORDER BY created_at DESC 
-       LIMIT ${limit} OFFSET ${offset}`
-        )
-
-        const [countRows] = await pool.execute<Array<{ count: number }>>(
-            'SELECT COUNT(*) as count FROM fan_works WHERE is_published = TRUE'
-        )
-
-        const total = Array.isArray(countRows) && countRows.length > 0 ? countRows[0].count : 0
+        const result = await fanworkQueries.getPublishedFanWorks(page, limit)
 
         return NextResponse.json({
-            data: rows || [],
+            data: result.data,
             pagination: {
-                page,
-                limit,
-                total,
-                totalPages: Math.ceil(total / limit),
+                page: result.page,
+                limit: result.limit,
+                total: result.total,
+                totalPages: result.totalPages,
             },
         })
     } catch (error) {
@@ -85,15 +63,17 @@ export async function POST(request: NextRequest) {
         const imageUrl = await uploadImage(buffer, coverImage.name)
 
         // 插入数据库
-        const [result] = await pool.execute(
-            `INSERT INTO fan_works (cover_image_url, author, category, description, source_url) 
-       VALUES (?, ?, ?, ?, ?)`,
-            [imageUrl, author, category, description || null, sourceUrl || null]
-        ) as any
+        const result = await fanworkQueries.createFanWork({
+            cover_image_url: imageUrl,
+            author,
+            category,
+            description: description || null,
+            source_url: sourceUrl || null,
+        })
 
         return NextResponse.json({
             success: true,
-            id: result?.insertId || null,
+            id: result.id,
         })
     } catch (error) {
         console.error('添加作品错误:', error)

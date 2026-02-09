@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 interface FanWork {
@@ -13,7 +13,7 @@ interface FanWork {
     created_at: string
 }
 
-export default function FanWorksAdminPage() {
+function FanWorksContent() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const [works, setWorks] = useState<FanWork[]>([])
@@ -394,5 +394,17 @@ export default function FanWorksAdminPage() {
                 </div>
             </div>
         </div>
+    )
+}
+
+export default function FanWorksAdminPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-gray-600">加载中...</div>
+            </div>
+        }>
+            <FanWorksContent />
+        </Suspense>
     )
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import pool from '@/lib/db'
 import { requireAuth } from '@/lib/middleware'
 import { deleteImage, uploadImage } from '@/lib/oss-upload'
+import * as fanworkQueries from '@/lib/db/queries/fanworks'
 
 // 获取单个作品（需要认证）
 export async function GET(
@@ -27,27 +27,16 @@ export async function GET(
       )
     }
 
-    const [rows] = await pool.query<Array<{
-      id: number
-      cover_image_url: string
-      author: string
-      category: string
-      description: string | null
-      source_url: string | null
-      created_at: Date
-    }>>(
-      'SELECT id, cover_image_url, author, category, description, source_url, created_at FROM fan_works WHERE id = ?',
-      [id]
-    )
+    const work = await fanworkQueries.getFanWorkById(id)
 
-    if (!Array.isArray(rows) || rows.length === 0) {
+    if (!work) {
       return NextResponse.json(
         { error: '作品不存在' },
         { status: 404 }
       )
     }
 
-    return NextResponse.json({ data: rows[0] })
+    return NextResponse.json({ data: work })
   } catch (error) {
     console.error('获取作品错误:', error)
     return NextResponse.json(
@@ -89,26 +78,21 @@ export async function PUT(
     const coverImage = formData.get('cover_image') as File | null
 
     // 获取当前作品信息
-    const [currentRows] = await pool.query<Array<{
-      cover_image_url: string
-    }>>(
-      'SELECT cover_image_url FROM fan_works WHERE id = ?',
-      [id]
-    )
+    const currentImageUrl = await fanworkQueries.getFanWorkImageUrl(id)
 
-    if (!Array.isArray(currentRows) || currentRows.length === 0) {
+    if (!currentImageUrl) {
       return NextResponse.json(
         { error: '作品不存在' },
         { status: 404 }
       )
     }
 
-    let imageUrl = currentRows[0].cover_image_url
+    let imageUrl = currentImageUrl
 
     // 如果上传了新图片，替换旧图片
     if (coverImage) {
       // 删除旧图片
-      await deleteImage(currentRows[0].cover_image_url)
+      await deleteImage(currentImageUrl)
       
       // 上传新图片
       const arrayBuffer = await coverImage.arrayBuffer()
@@ -116,45 +100,40 @@ export async function PUT(
       imageUrl = await uploadImage(buffer, coverImage.name)
     }
 
-    // 构建更新字段
-    const updateFields: string[] = []
-    const updateValues: any[] = []
+    // 构建更新对象
+    const updates: {
+      cover_image_url?: string
+      author?: string
+      category?: string
+      description?: string | null
+      source_url?: string | null
+    } = {}
 
     if (author !== null) {
-      updateFields.push('author = ?')
-      updateValues.push(author)
+      updates.author = author
     }
     if (category !== null) {
-      updateFields.push('category = ?')
-      updateValues.push(category)
+      updates.category = category
     }
     if (description !== null) {
-      updateFields.push('description = ?')
-      updateValues.push(description || null)
+      updates.description = description || null
     }
     if (sourceUrl !== null) {
-      updateFields.push('source_url = ?')
-      updateValues.push(sourceUrl || null)
+      updates.source_url = sourceUrl || null
     }
     if (coverImage) {
-      updateFields.push('cover_image_url = ?')
-      updateValues.push(imageUrl)
+      updates.cover_image_url = imageUrl
     }
 
-    if (updateFields.length === 0) {
+    if (Object.keys(updates).length === 0) {
       return NextResponse.json(
         { error: '没有要更新的字段' },
         { status: 400 }
       )
     }
 
-    updateValues.push(id)
-
     // 更新数据库
-    await pool.execute(
-      `UPDATE fan_works SET ${updateFields.join(', ')} WHERE id = ?`,
-      updateValues
-    )
+    await fanworkQueries.updateFanWork(id, updates)
 
     return NextResponse.json({ success: true })
   } catch (error) {
@@ -192,18 +171,15 @@ export async function DELETE(
     }
 
     // 获取作品信息（用于删除 OSS 图片）
-    const [rows] = await pool.query<Array<{ cover_image_url: string }>>(
-      'SELECT cover_image_url FROM fan_works WHERE id = ?',
-      [id]
-    )
+    const imageUrl = await fanworkQueries.getFanWorkImageUrl(id)
 
-    if (Array.isArray(rows) && rows.length > 0) {
+    if (imageUrl) {
       // 删除 OSS 中的图片
-      await deleteImage(rows[0].cover_image_url)
+      await deleteImage(imageUrl)
     }
 
     // 删除数据库记录
-    await pool.execute('DELETE FROM fan_works WHERE id = ?', [id])
+    await fanworkQueries.deleteFanWork(id)
 
     return NextResponse.json({ success: true })
   } catch (error) {

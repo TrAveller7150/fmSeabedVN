@@ -1,15 +1,31 @@
 // 延迟加载 OSS 客户端，确保只在服务端使用
-import type OSS from 'ali-oss'
+// 类型定义在 types/ali-oss.d.ts
+type OSSClient = {
+  put(name: string, file: Buffer, options?: {
+    headers?: Record<string, string>
+    acl?: string
+  }): Promise<{
+    url: string
+    name: string
+    res: {
+      status: number
+      statusCode: number
+      headers: Record<string, string>
+    }
+  }>
+  delete(name: string): Promise<void>
+}
 
-let ossClient: OSS | null = null
+let ossClient: OSSClient | null = null
 
-function getOSSClient(): OSS {
+function getOSSClient(): OSSClient {
   if (typeof window !== 'undefined') {
     throw new Error('OSS client can only be used on the server side')
   }
 
   if (!ossClient) {
     // 动态导入，避免在客户端打包
+    // @ts-ignore - ali-oss 没有类型定义，但运行时可用
     const OSSModule = require('ali-oss')
     // ali-oss 的 CommonJS 导出方式
     const OSS = OSSModule.default || OSSModule
@@ -18,7 +34,7 @@ function getOSSClient(): OSS {
       accessKeyId: process.env.OSS_ACCESS_KEY_ID!,
       accessKeySecret: process.env.OSS_ACCESS_KEY_SECRET!,
       bucket: process.env.OSS_BUCKET!,
-    })
+    }) as OSSClient
   }
 
   return ossClient
