@@ -3,8 +3,8 @@ import "./globals.css";
 import MainLayout from "@/components/layouts/MainLayout";
 
 export const metadata: Metadata = {
-  title: "海底小纵队",
-  description: "Seabed 游戏粉丝网站",
+  title: "四叶草事务所",
+  description: "Seabed 粉丝网站",
 };
 
 export default function RootLayout({
@@ -16,7 +16,7 @@ export default function RootLayout({
     <html lang="zh-CN">
       <body className="antialiased">
         <MainLayout>
-        {children}
+          {children}
         </MainLayout>
       </body>
     </html>
