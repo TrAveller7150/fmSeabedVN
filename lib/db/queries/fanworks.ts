@@ -13,25 +13,50 @@ export interface FanWork {
   is_published: boolean
 }
 
-// 获取已发布的作品列表（分页）
-export async function getPublishedFanWorks(page: number = 1, limit: number = 50) {
-  const offset = (page - 1) * limit
+const ALL_CATEGORIES = '全部'
+const OTHER_CATEGORY = '其他'
 
-  const { data, error } = await supabase
+export type FanWorksSortOrder = 'newest' | 'oldest'
+
+// 获取已发布的作品列表（分页，支持按类型筛选与按时间排序）
+// 优化：列表查询与 count 并行，减少总等待时间
+export async function getPublishedFanWorks(
+  page: number = 1,
+  limit: number = 50,
+  category?: string,
+  sortOrder: FanWorksSortOrder = 'newest'
+) {
+  const offset = (page - 1) * limit
+  const filterCategory = category?.trim() && category !== ALL_CATEGORIES ? category : undefined
+  const ascending = sortOrder === 'oldest'
+
+  let listQuery = supabase
     .from('fan_works')
     .select('id, cover_image_url, author, category, description, source_url, created_at')
     .eq('is_published', true)
-    .order('created_at', { ascending: false })
-    .range(offset, offset + limit - 1)
 
-  if (error) throw error
+  if (filterCategory) {
+    listQuery = listQuery.eq('category', filterCategory)
+  }
 
-  // 获取总数
-  const { count, error: countError } = await supabase
+  let countQuery = supabase
     .from('fan_works')
     .select('*', { count: 'exact', head: true })
     .eq('is_published', true)
 
+  if (filterCategory) {
+    countQuery = countQuery.eq('category', filterCategory)
+  }
+
+  const [listResult, countResult] = await Promise.all([
+    listQuery.order('created_at', { ascending }).range(offset, offset + limit - 1),
+    countQuery,
+  ])
+
+  const { data, error } = listResult
+  if (error) throw error
+
+  const { count, error: countError } = countResult
   if (countError) throw countError
 
   return {
@@ -41,6 +66,41 @@ export async function getPublishedFanWorks(page: number = 1, limit: number = 50)
     limit,
     totalPages: Math.ceil((count || 0) / limit)
   }
+}
+
+// 分类列表缓存（避免每次请求全表拉取 category）
+const CATEGORIES_CACHE_TTL_MS = 5 * 60 * 1000 // 5 分钟
+let categoriesCache: { data: string[]; expiresAt: number } | null = null
+
+export function invalidateCategoriesCache(): void {
+  categoriesCache = null
+}
+
+// 获取所有已出现过的分类（用于筛选选项），并固定包含「其他」
+// 优化：内存缓存，减少全表扫描频率；增删改作品后需调用 invalidateCategoriesCache
+export async function getDistinctCategories(): Promise<string[]> {
+  const now = Date.now()
+  if (categoriesCache && categoriesCache.expiresAt > now) {
+    return categoriesCache.data
+  }
+
+  const { data, error } = await supabase
+    .from('fan_works')
+    .select('category')
+    .eq('is_published', true)
+
+  if (error) throw error
+
+  const set = new Set<string>()
+  ;(data || []).forEach((row: { category: string | null }) => {
+    const c = row.category?.trim()
+    if (c) set.add(c)
+  })
+  if (!set.has(OTHER_CATEGORY)) set.add(OTHER_CATEGORY)
+
+  const list = Array.from(set).sort((a, b) => a.localeCompare(b, 'zh-CN'))
+  categoriesCache = { data: list, expiresAt: now + CATEGORIES_CACHE_TTL_MS }
+  return list
 }
 
 // 根据 ID 获取单个作品

@@ -135,6 +135,8 @@ export async function PUT(
     // 更新数据库
     await fanworkQueries.updateFanWork(id, updates)
 
+    fanworkQueries.invalidateCategoriesCache()
+
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('更新作品错误:', error)
@@ -180,6 +182,8 @@ export async function DELETE(
 
     // 删除数据库记录
     await fanworkQueries.deleteFanWork(id)
+
+    fanworkQueries.invalidateCategoriesCache()
 
     return NextResponse.json({ success: true })
   } catch (error) {
