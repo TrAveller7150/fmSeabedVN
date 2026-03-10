@@ -7,7 +7,7 @@ function StoryBackground() {
     <div className="absolute blur-[3.35px] content-stretch flex flex-col inset-[0_4px_-23px_0] items-start opacity-82 size-full">
       <div className="h-full relative shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] shrink-0 w-full">
         <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
-          <img alt="Story Background" className="absolute max-w-none object-cover size-full" src="/assets/index/bg_story.png" />
+          <img alt="Story Background" className="absolute max-w-none object-cover size-full" src="/assets/index/bg_story.png" loading="lazy" />
           <div className="absolute bg-[rgba(255,248,248,0.07)] inset-0" />
         </div>
       </div>

@@ -6,7 +6,7 @@ function PricingBackground() {
   return (
     <div className="absolute inset-0 blur-[3.35px]">
       <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
-        <img alt="Pricing Background" className="absolute size-full max-w-none object-cover" src="/assets/index/bg_pricing.png" />
+        <img alt="Pricing Background" className="absolute size-full max-w-none object-cover" src="/assets/index/bg_pricing.png" loading="lazy" />
         <div className="absolute inset-0 bg-[rgba(255,255,255,0.19)]" />
       </div>
     </div>

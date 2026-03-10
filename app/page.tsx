@@ -77,17 +77,20 @@ export default function Home() {
           <Hero onReady={handleHeroReady} />
         </section>
 
-        <section className="min-h-screen w-full relative z-20">
-          <Story />
-        </section>
-
-        <section className="min-h-screen w-full relative z-10">
-          <Pricing />
-        </section>
-
-        <section className="w-full relative z-0">
-          <Footer />
-        </section>
+        {/* 首屏就绪后再挂载下方区块，避免与 Hero 争抢请求；下方图片异步加载 */}
+        {isHomeReady && (
+          <>
+            <section className="min-h-screen w-full relative z-20">
+              <Story />
+            </section>
+            <section className="min-h-screen w-full relative z-10">
+              <Pricing />
+            </section>
+            <section className="w-full relative z-0">
+              <Footer />
+            </section>
+          </>
+        )}
       </div>
     </>
   )
