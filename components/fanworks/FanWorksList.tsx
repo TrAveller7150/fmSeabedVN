@@ -310,7 +310,20 @@ export default function FanWorksList() {
         <div className="w-full">
             {loading && initialWorks.length === 0 ? (
                 <div className="flex items-center justify-center py-20">
-                    <div className="text-gray-600 font-['Inter','Noto_Sans_SC',sans-serif]">加载中...</div>
+                    <div className="text-gray-600 font-['Inter','Noto_Sans_SC',sans-serif] flex items-baseline">
+                        <span>加载中</span>
+                        <span className="inline-flex" aria-hidden>
+                            {[0, 1, 2].map((i) => (
+                                <span
+                                    key={i}
+                                    className="animate-[loading-dots_1.2s_ease-in-out_infinite]"
+                                    style={{ animationDelay: `${i * 0.2}s` }}
+                                >
+                                    .
+                                </span>
+                            ))}
+                        </span>
+                    </div>
                 </div>
             ) : (
                 <>
