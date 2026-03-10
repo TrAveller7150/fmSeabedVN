@@ -1,16 +1,42 @@
 'use client'
 
-import RevealAnimation from '@/components/common/RevealAnimation'
+import { useEffect } from 'react'
+import Image from 'next/image'
 
 export default function Hero() {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
+
+  const handleHeroImageLoad = () => {
+    document.body.style.overflow = ''
+  }
+
   return (
     <div className="content-stretch flex flex-col items-center justify-end px-[32px] py-[120px] relative w-full h-screen min-h-[600px] overflow-hidden" data-name="Hero 1">
-      <img alt="Background" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src="/assets/index/bg2.jpg" />
-      <RevealAnimation direction="up" delay={200} distance={100}>
-        <div className="relative shrink-0 w-[80%] max-w-[600px] mb-[10vh] mx-auto" data-name="title(1) 1">
-          <img alt="Seabed Title" className="w-full h-auto object-contain pointer-events-none mx-auto" src="/assets/index/title(1).png" />
-        </div>
-      </RevealAnimation>
+      <Image
+        alt="Background"
+        src="/assets/index/bg2.jpg"
+        fill
+        priority
+        fetchPriority="high"
+        className="object-cover pointer-events-none"
+        sizes="100vw"
+        onLoad={handleHeroImageLoad}
+      />
+      <div className="relative shrink-0 w-[80%] max-w-[600px] mb-[10vh] mx-auto z-10" data-name="title(1) 1">
+        <Image
+          alt="Seabed Title"
+          src="/assets/index/title(1).png"
+          width={600}
+          height={200}
+          priority
+          fetchPriority="high"
+          className="w-full h-auto object-contain pointer-events-none mx-auto"
+          sizes="(max-width: 768px) 80vw, 600px"
+        />
+      </div>
     </div>
-  );
+  )
 }

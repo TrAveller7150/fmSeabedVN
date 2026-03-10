@@ -48,6 +48,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
+      <head>
+        <link rel="preload" as="image" href="/assets/index/bg2.jpg" />
+        <link rel="preload" as="image" href="/assets/index/title(1).png" />
+      </head>
       <body className="antialiased">
         <MainLayout>
           {children}
