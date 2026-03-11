@@ -53,7 +53,7 @@ export default function StoryAnalysisContent() {
                     <AnalysisCard
                         title="百合悬疑神作？一口气讲不完《SeaBed》剧情【第一至三章】"
                         description="较为详尽的视频解析，会每一章地进行讲解，很适合有点忘了剧情之后重温"
-                        image="/assets/analysis/ev16.png"
+                        image="/assets/analysis/ev16.webp"
                         link="https://www.bilibili.com/video/BV1TpbEzHE67"
                     />
                 </li>
@@ -61,7 +61,7 @@ export default function StoryAnalysisContent() {
                     <AnalysisCard
                         title="Everything has a meaning——《seabed》深入解析"
                         description="一篇非常详细的长文，包括了写作技法分析，剧情分析，时间线梳理，地点考据等"
-                        image="/assets/analysis/ev12.png"
+                        image="/assets/analysis/ev12.webp"
                         link="https://bbs.yamibo.com/thread-522847-1-1.html"
                     />
                 </li>
@@ -69,7 +69,7 @@ export default function StoryAnalysisContent() {
                     <AnalysisCard
                         title="seabed剧情部分解析（转自no1234shame567）"
                         description="对于七重身份的解析很有意思，让人看到另一个世界"
-                        image="/assets/analysis/ev30_1.png"
+                        image="/assets/analysis/ev30_1.webp"
                         link="https://tieba.baidu.com/p/7367140170"
                     />
                 </li>

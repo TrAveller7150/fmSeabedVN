@@ -27,7 +27,7 @@ export default function Hero({ onReady }: HeroProps) {
     <div className="content-stretch flex flex-col items-center justify-end px-[20px] py-[60px] sm:px-[24px] sm:py-[80px] md:px-[32px] md:py-[100px] relative w-full h-screen min-h-[600px] overflow-hidden" data-name="Hero 1">
       <Image
         alt="Background"
-        src="/assets/index/bg2.jpg"
+        src="/assets/index/bg2.webp"
         fill
         priority
         fetchPriority="high"
@@ -41,7 +41,7 @@ export default function Hero({ onReady }: HeroProps) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             alt="Seabed Title"
-            src="/assets/index/title(1).png"
+            src="/assets/index/title(1).webp"
             fetchPriority="high"
             loading="eager"
             className="w-full h-auto object-contain pointer-events-none mx-auto"

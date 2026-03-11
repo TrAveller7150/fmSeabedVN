@@ -53,7 +53,7 @@ export default function ResourcesContent() {
                     <ResourceCard
                         title="音乐电台"
                         description={<p className="leading-[1.4] whitespace-pre-wrap">网易云博客，包括所有Bgm以及4个DLC的mp3格式</p>}
-                        image="/assets/resources/ev7.png"
+                        image="/assets/resources/ev7.webp"
                         link="https://music.163.com/djradio?id=960908663&uct2=U2FsdGVkX1+HeDL7orqdNZsFBp0xE8GqPoWHDKrSl6M="
                     />
                 </li>
@@ -66,7 +66,7 @@ export default function ResourcesContent() {
                                 <p>解压密码:seabed</p>
                             </>
                         }
-                        image="/assets/resources/ev2.png"
+                        image="/assets/resources/ev2.webp"
                         link="https://pan.baidu.com/s/1wKsnUzjVEcTq4HEQdUSEMw?pwd=tksc"
                     />
                 </li>
@@ -74,7 +74,7 @@ export default function ResourcesContent() {
                     <ResourceCard
                         title="文本"
                         description={<p className="leading-[1.4] whitespace-pre-wrap">txt格式，包括中英文本</p>}
-                        image="/assets/resources/ev94.png"
+                        image="/assets/resources/ev94.webp"
                         link="https://pan.baidu.com/s/1DHwR2EuYktNuAjy_5tQrnQ?pwd=tksc"
                     />
                 </li>
