@@ -22,7 +22,7 @@ function SocialLink({ href, iconPath, alt }: { href: string; iconPath: string; a
     );
 }
 
-function ContactInfo() {
+function ContactInfo({ variant }: { variant?: 'default' | 'pilgrimage' }) {
     return (
         <div className="relative flex flex-col items-start gap-[8px] w-full shrink-0 content-stretch" data-name="Text">
             <CompanyInfo />
@@ -46,14 +46,19 @@ function ContactInfo() {
                     alt="Bangumi"
                 />
             </div>
+            {variant === 'pilgrimage' && (
+                <p className="mt-2 font-['Inter','Noto_Sans_SC','Noto_Sans_JP',sans-serif] text-[14px] text-[rgba(0,0,0,0.45)] leading-[1.45] tracking-[-0.07px]">
+                    <a href="https://tieba.baidu.com/p/9881552006" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors">作者の奇妙冒险</a>
+                </p>
+            )}
         </div>
     );
 }
 
-function FooterLeftContent() {
+function FooterLeftContent({ variant }: { variant?: 'default' | 'pilgrimage' }) {
     return (
         <div className="relative flex flex-col items-start flex-[1_0_0] min-w-px min-h-px content-stretch" data-name="Content">
-            <ContactInfo />
+            <ContactInfo variant={variant} />
         </div>
     );
 }
@@ -106,20 +111,20 @@ function FooterNav() {
     );
 }
 
-function FooterContainer() {
+function FooterContainer({ variant }: { variant?: 'default' | 'pilgrimage' }) {
     return (
         <div className="relative flex items-start gap-[120px] flex-[1_0_0] min-w-px min-h-px py-[80px] content-stretch" data-name="Container">
             <div aria-hidden="true" className="absolute inset-0 border-t border-solid border-[rgba(0,0,0,0.1)] pointer-events-none" />
-            <FooterLeftContent />
+            <FooterLeftContent variant={variant} />
             <FooterNav />
         </div>
     );
 }
 
-export default function Footer() {
+export default function Footer({ variant = 'default' }: { variant?: 'default' | 'pilgrimage' }) {
     return (
         <footer className="relative flex justify-center items-center size-full px-[64px] bg-gray-50 content-stretch" data-name="Footer 1">
-            <FooterContainer />
+            <FooterContainer variant={variant} />
         </footer>
     );
 }

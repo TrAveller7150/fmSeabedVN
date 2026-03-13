@@ -19,7 +19,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       <main className={`flex-grow ${isHome ? 'overflow-hidden' : ''}`}>
         {children}
       </main>
-      {!isHome && <Footer />}
+      {!isHome && <Footer variant={pathname === '/pilgrimage' ? 'pilgrimage' : 'default'} />}
     </div>
   )
 }
