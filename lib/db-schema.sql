@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS `fan_works` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `cover_image_url` VARCHAR(500) NOT NULL COMMENT '封面图 URL（OSS）',
   `author` VARCHAR(100) NOT NULL COMMENT '作者信息',
-  `category` VARCHAR(50) NOT NULL COMMENT '作品类别（画/MAD.AMV/其他）',
+  `category` VARCHAR(50) NOT NULL COMMENT '作品类别（画/视频/其他）',
   `description` TEXT COMMENT '作品简介',
   `source_url` VARCHAR(500) COMMENT '源地址（内嵌在封面图中）',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
