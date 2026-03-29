@@ -251,7 +251,7 @@ function FanWorksContent() {
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                                 >
                                     <option value="画">画</option>
-                                    <option value="MAD.AMV">MAD.AMV</option>
+                                    <option value="视频">视频</option>
                                     <option value="其他">其他</option>
                                 </select>
                             </div>
