@@ -1,4 +1,5 @@
 'use client'
+// 作品类别与数据库一致：画 / 视频 / 其他
 
 import { useState, useEffect, useMemo } from 'react'
 import { useInView } from 'react-intersection-observer'
